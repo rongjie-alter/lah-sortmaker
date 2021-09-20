@@ -299,14 +299,13 @@ async function loadList() {
 	// Just push objects of {name: String, url: String} into namMember array
 	// You can just hardcode it, or fetch from external source then do some processing
 
-	const dataUrl = "https://rawcdn.githack.com/liveahero-wiki/liveahero-wiki.github.io/a9315f0d1dc1a8476c7d03be501f6d4743d756d7/_data/SidekickMaster.json";
+	const dataUrl = "https://liveahero-wiki.github.io/api/card.json";
 
 	let res = await fetch(dataUrl);
 	let data = await res.json();
 
 	for (let k in data) {
 		let unit = data[k];
-		if (unit.levelZone > 1) continue;
 		namMember.push({
 			name: unit.cardName,
 			url: `https://liveahero-wiki.github.io/cdn/Sprite/icon_${unit.resourceName}_s01.png`,
