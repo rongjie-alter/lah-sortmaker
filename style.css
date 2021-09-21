@@ -15,16 +15,14 @@ body
 
 
 #sort-progress { margin-bottom: 24px; }
-#sort-select
-{
+#sort-select {
 	margin: auto;
 	margin-bottom: 6px;
 }
 
 #sort-select .unit-name, #character-slot .character-spacing { margin-top: 12px; }
-#character-slot .character-spacing { width: 100px; }
 #sort-select .btn { font-size: 18px; font-weight: bold; white-space: normal; }
-#sort-select img, .results-field img { width: 140px !important; height: 140px; }
+#sort-select img { width: 140px !important; height: 140px; }
 #sort-select #middle-field
 {
 	margin-left: 3%;
@@ -32,15 +30,17 @@ body
 }
 #sort-select #middle-field button { height: 100%; white-space: normal; }
 
-#character-slot
-{
-	display: inline;
-	width: 20%;
+.results-field .character-spacing {
+	width: 140px;
+	height: 140px;
+}
 
-	min-height: 100px;
+.results-field-extended .character-spacing {
+	width: 100px;
+	height: 100px;
+}
 
-	float: left;
-
+.character-slot {
 	padding: 12px 0px;
 
 	border: 1px solid #e7e7e7;
@@ -50,19 +50,34 @@ body
 	white-space: nowrap;
 }
 .results-field #character-slot { font-size: 20px; }
-.results-field-extended #character-slot { margin-top: 20px; width: 14.255% !important; }
-.results-field, .results-field-extended { min-height: 1px; text-align: center; }
+.results-field, .results-field-extended { text-align: center; }
 
-#sort-results
-{
+.results-field {
+	display: grid;
+    grid-auto-rows: minmax(176px, auto);
+    grid-template-columns: repeat(auto-fill, 210px);
+    padding: 0;
+    margin: 10px 0;
+    contain: content;
+}
+
+.results-field-extended {
+	display: grid;
+    grid-auto-rows: minmax(176px, auto);
+    grid-template-columns: repeat(auto-fill, 170px);
+    padding: 0;
+    margin: 10px 0;
+    contain: content;
+}
+
+#sort-results {
 	background-color: white;
 
 	margin: auto;
 	padding: 8px 20px;
 }
 
-#credits
-{
+#credits {
 	position: fixed;
 
 	right: 1%;

@@ -13,6 +13,7 @@ let totalSize = 0;
 let finishSize = 0;
 let finishFlag = 1;
 
+const $$ = document.querySelector.bind(document);
 
 function initList() {
 	let n = 0;
@@ -202,18 +203,21 @@ function showResults() {
 
 	let ranking = 1;
 	let sameRank = 1;
-	let str = "";
-	let i;
+
+	const rootTopFive = new DocumentFragment();
+	const rootOther = new DocumentFragment();
+	const topFive = $$('.results-field');
+	const other = $$('.results-field-extended');
 
 	for (let i = 0; i < namMember.length; i++) {
 		const unitName = namMember[lstMember[0][i]].name;
 		const unitURL = namMember[lstMember[0][i]].url;
-		const unitHTML = '<div id="character-slot"><div>#' + ranking + ' - ' + unitName + '</div><img class="character-spacing" src="' + unitURL + '"></div>';
+		const unitDiv = createCharaSlot(unitName, unitURL, ranking)
 
 		if (i <= 4)
-			$(unitHTML).insertBefore('#sort-results .results-field .clearfix');
+			rootTopFive.appendChild(unitDiv)
 		else
-			$(unitHTML).insertBefore('#sort-results .results-field-extended .clearfix');
+			rootOther.appendChild(unitDiv)
 
 		if (i < namMember.length - 1) {
 			if (equal[lstMember[0][i]] == lstMember[0][i + 1]) {
@@ -225,36 +229,57 @@ function showResults() {
 		}
 	}
 
-	$('#show-results').prop('disabled', true);
-	$('#sort-results').toggle(2000, function () { $('#save-results').prop('disabled', false); });
+	topFive.appendChild(rootTopFive);
+	other.appendChild(rootOther);
+
+	$$('#show-results').disabled = true;
+	$('#sort-results').toggle(2000, function () { $$('#save-results').disabled = false; });
 	modifyProgressBar(100);
 	scrollToLastHeight();
 }
 
+function createCharaSlot(unitName, unitURL, ranking) {
+	const div = document.createElement("div");
+	div.classList.add("character-slot");
+
+	const title = document.createElement("div");
+	title.textContent = `#${ranking} - ${unitName}`;
+	div.appendChild(title);
+
+	const img = new Image();
+	img.src = unitURL;
+	img.classList.add("character-spacing");
+	div.appendChild(img);
+
+	return div;
+}
+
 function scrollToLastHeight() {
-	$('html, body').animate({ scrollTop: $(window).height() - 40 }, 2000);
+	//$('html, body').animate({ scrollTop: $(window).height() - 40 }, 2000);
 }
 
 function showMoreResults() {
-	$('#sort-results .results-field-extended').slideDown(1500, function () { $('#save-results').prop('disabled', false); });
+	$('#sort-results .results-field-extended').slideDown(1500, function () { $$('#save-results').disabled = false; });
 
 	scrollToLastHeight();
-	$('#show-more').prop('disabled', true);
-	$('#save-results').prop('disabled', true);
+	$$('#show-more').disabled = true;
+	$$('#save-results').disabled = true;
 }
 
 function modifyProgressBar(percentage) {
-	$('#sort-progress .progress-bar').css('width', percentage + '%');
-	$('#sort-progress .percentage').text(Math.round(percentage));
+	$$('#sort-progress .progress-bar').style.width = percentage + '%';
+	$$('#sort-progress .percentage').textContent = Math.round(percentage);
+
+	$$('#sort-progress .progress-bar').classList.add('progress-bar-striped')
 
 	if (percentage >= 100)
-		$('#sort-progress .progress-bar').addClass('progress-bar-success').removeClass('progress-bar-striped active');
+		$$('#sort-progress .progress-bar').classList.remove('active');
 	else
-		$('#sort-progress .progress-bar').removeClass('progress-bar-success').addClass('progress-bar-striped active');
+		$$('#sort-progress .progress-bar').classList.add('active');
 }
 
 function showProgress() {
-	$('#sort-title .battle-number').text(numQuestion);
+	$$('#sort-title .battle-number').textContent = numQuestion;
 	//$('#sort-title .total-number').text(totalSize * 0.2);
 
 	modifyProgressBar(finishSize * 100 / totalSize);
@@ -262,13 +287,12 @@ function showProgress() {
 
 function showImage() {
 	const unit1 = lstMember[cmp1][head1], unit2 = lstMember[cmp2][head2];
-	const percentage = Math.floor(finishSize * 100 / totalSize);
 
-	$('#left-field .unit-icon').attr('src', namMember[unit1].url);
-	$('#left-field .unit-name').text(namMember[unit1].name);
+	$$('#left-field .unit-icon').src = namMember[unit1].url;
+	$$('#left-field .unit-name').textContent = namMember[unit1].name;
 
-	$('#right-field .unit-icon').attr('src', namMember[unit2].url);
-	$('#right-field .unit-name').text(namMember[unit2].name);
+	$$('#right-field .unit-icon').src = namMember[unit2].url;
+	$$('#right-field .unit-name').textContent = namMember[unit2].name;
 
 	numQuestion++;
 }
@@ -277,10 +301,10 @@ function downloadScreenshot() {
 	let canvas = canvasObj;
 
 	if (canvas) {
-		let elem = $('#download-sorter');
+		let elem = $$('#download-sorter');
 
-		elem.attr('href', canvas.toDataURL('image/jpeg'));
-		elem.attr('download', 'SortMaker_' + $('div#dialog-title').text() + '.jpeg');
+		elem.href = canvas.toDataURL('image/jpeg');
+		elem.download = `SortMaker_${$$('div#dialog-title').textContent}.jpeg`;
 	}
 }
 
@@ -324,14 +348,17 @@ async function main() {
 	$('#sort-results').toggle();
 	$('#sort-results .results-field-extended').toggle();
 
-	$('#sort-select #left-field').on('click', function () { sortList(-1); });
-	$('#sort-select #right-field').on('click', function () { sortList(1); });
-	$('#sort-select #middle-field').on('click', function () { sortList(0); });
+	$$('#sort-select #left-field').addEventListener('click', function () { sortList(-1); });
+	$$('#sort-select #right-field').addEventListener('click', function () { sortList(1); });
+	$$('#sort-select #middle-field').addEventListener('click', function () { sortList(0); });
 
-	$('#show-more').on('click', showMoreResults);
-	$('#download-sorter').on('click', downloadScreenshot);
-	$('#show-results').on('click', showResults).prop('disabled', false);
-	$('#save-results').on('click', showScreenshot).prop('disabled', true);
+	$$('#show-more').addEventListener('click', showMoreResults);
+	$$('#download-sorter').addEventListener('click', downloadScreenshot);
+	$$('#show-results').addEventListener('click', showResults)
+	$$('#save-results').addEventListener('click', showScreenshot)
+
+	$$('#show-results').disabled = false;
+	$$('#save-results').disabled = true;
 }
 
 main();
