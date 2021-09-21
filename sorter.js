@@ -73,9 +73,6 @@ function sortList(flag) {
 	if (finishFlag == 1)
 		return;
 
-	let i = 0;
-	let str = "";
-
 	//rec preservation
 	if (flag < 0) {
 		rec[nrec] = lstMember[cmp1][head1];
@@ -233,9 +230,8 @@ function showResults() {
 	other.appendChild(rootOther);
 
 	$$('#show-results').disabled = true;
-	$('#sort-results').toggle(2000, function () { $$('#save-results').disabled = false; });
+	$$('#save-results').disabled = false;
 	modifyProgressBar(100);
-	scrollToLastHeight();
 }
 
 function createCharaSlot(unitName, unitURL, ranking) {
@@ -254,33 +250,18 @@ function createCharaSlot(unitName, unitURL, ranking) {
 	return div;
 }
 
-function scrollToLastHeight() {
-	//$('html, body').animate({ scrollTop: $(window).height() - 40 }, 2000);
-}
-
 function showMoreResults() {
-	$('#sort-results .results-field-extended').slideDown(1500, function () { $$('#save-results').disabled = false; });
-
-	scrollToLastHeight();
 	$$('#show-more').disabled = true;
-	$$('#save-results').disabled = true;
+	$$('#save-results').disabled = false;
 }
 
 function modifyProgressBar(percentage) {
-	$$('#sort-progress .progress-bar').style.width = percentage + '%';
-	$$('#sort-progress .percentage').textContent = Math.round(percentage);
-
-	$$('#sort-progress .progress-bar').classList.add('progress-bar-striped')
-
-	if (percentage >= 100)
-		$$('#sort-progress .progress-bar').classList.remove('active');
-	else
-		$$('#sort-progress .progress-bar').classList.add('active');
+	const progress = $$('#sort-progress');
+	progress.value = Math.round(percentage);
 }
 
 function showProgress() {
 	$$('#sort-title .battle-number').textContent = numQuestion;
-	//$('#sort-title .total-number').text(totalSize * 0.2);
 
 	modifyProgressBar(finishSize * 100 / totalSize);
 }
@@ -304,16 +285,19 @@ function downloadScreenshot() {
 		let elem = $$('#download-sorter');
 
 		elem.href = canvas.toDataURL('image/jpeg');
-		elem.download = `SortMaker_${$$('div#dialog-title').textContent}.jpeg`;
 	}
 }
 
 async function showScreenshot() {
-	// $('#sort-results').css('width', '1024px');
+	canvas = await html2canvas($$('#sort-results'))
+	canvas.style.width = "auto";
+	canvas.style.height = "600px";
 
-	canvas = await html2canvas(document.querySelector('#sort-results'))
-	$('canvas').remove();
-	$('#render-results hr').before(canvas);
+	const output = $$('#canvas');
+	if (output.firstElementChild != null) output.removeChild(output.firstElementChild);
+
+	output.appendChild(canvas);
+	renderDiag.showModal();
 
 	canvasObj = canvas;
 }
@@ -337,6 +321,9 @@ async function loadList() {
 	}
 }
 
+const renderDiag = $$("#render-results");
+const helpDiag = $$("#help");
+
 async function main() {
 	await loadList();
 
@@ -345,8 +332,8 @@ async function main() {
 	showProgress();
 	showImage();
 
-	$('#sort-results').toggle();
-	$('#sort-results .results-field-extended').toggle();
+	dialogPolyfill.registerDialog(helpDiag);
+	dialogPolyfill.registerDialog(renderDiag);
 
 	$$('#sort-select #left-field').addEventListener('click', function () { sortList(-1); });
 	$$('#sort-select #right-field').addEventListener('click', function () { sortList(1); });
@@ -355,7 +342,8 @@ async function main() {
 	$$('#show-more').addEventListener('click', showMoreResults);
 	$$('#download-sorter').addEventListener('click', downloadScreenshot);
 	$$('#show-results').addEventListener('click', showResults)
-	$$('#save-results').addEventListener('click', showScreenshot)
+	$$('#save-results').addEventListener('click', showScreenshot);
+	$$('#help-button').addEventListener('click', function() { helpDiag.showModal(); })
 
 	$$('#show-results').disabled = false;
 	$$('#save-results').disabled = true;

@@ -1,20 +1,22 @@
-body
-{
+body {
 	max-width: 1536px;
-
 	margin: auto;
+	font-family: "Helvetica", "Arial Black", sans-serif;
 }
 
-#sorter
-{
-	font-family: "Helvetica", "Arial Black", Gadget, sans-serif !important;
+progress {
+	height: 30px;
 
-	border-collapse: separate;
-	border-spacing: 0px 6px;
+	/*font-size: 12px;
+	overflow: hidden;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%);
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%);
+	text-align: center;*/
 }
 
-
-#sort-progress { margin-bottom: 24px; }
+#sort-progress { display: block; margin-bottom: 24px; width: 100%; }
 #sort-select {
 	margin: auto;
 	margin-bottom: 6px;
@@ -71,9 +73,6 @@ body
 }
 
 #sort-results {
-	background-color: white;
-
-	margin: auto;
 	padding: 8px 20px;
 }
 
@@ -84,8 +83,41 @@ body
 	bottom: 1%;
 }
 
-canvas
-{
-	width: 100% !important;
-	height: auto !important;
-}
+/* dialog-polyfill */
+dialog {
+	position: absolute;
+	left: 0; right: 0;
+	width: -moz-fit-content;
+	width: -webkit-fit-content;
+	width: fit-content;
+	height: -moz-fit-content;
+	height: -webkit-fit-content;
+	height: fit-content;
+	margin: auto;
+	border: solid;
+	padding: 1em;
+	background: white;
+	color: black;
+	display: block;
+  }
+  
+  dialog:not([open]) {
+	display: none;
+  }
+  
+  dialog + .backdrop {
+	position: fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	background: rgba(0,0,0,0.1);
+  }
+  
+  ._dialog_overlay {
+	position: fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+  }
+  
+  dialog.fixed {
+	position: fixed;
+	top: 50%;
+	transform: translate(0, -50%);
+  }
